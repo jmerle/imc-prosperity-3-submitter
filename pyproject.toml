@@ -1,10 +1,6 @@
-[build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "prosperity2submit"
-description = "Command-line submitter for IMC Prosperity 2 algorithms"
+name = "prosperity3submit"
+description = "Command-line submitter for IMC Prosperity 3 algorithms"
 version = "0.0.0"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -24,13 +20,28 @@ dependencies = [
     "requests-toolbelt",
 ]
 
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
 [project.scripts]
-prosperity2submit = "prosperity2submit.__main__:main"
+prosperity3submit = "prosperity3submit.__main__:main"
 
 [project.urls]
-Repository = "https://github.com/jmerle/imc-prosperity-2-submitter"
-Issues = "https://github.com/jmerle/imc-prosperity-2-submitter/issues"
-Changelog = "https://github.com/jmerle/imc-prosperity-2-submitter/releases"
+Repository = "https://github.com/jmerle/imc-prosperity-3-submitter"
+Issues = "https://github.com/jmerle/imc-prosperity-3-submitter/issues"
+Changelog = "https://github.com/jmerle/imc-prosperity-3-submitter/releases"
 
 [tool.setuptools.packages.find]
-include = ["prosperity2submit", "prosperity2submit.*"]
+include = ["prosperity3submit", "prosperity3submit.*"]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.9.7",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["I"]
