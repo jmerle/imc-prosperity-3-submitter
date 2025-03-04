@@ -1,14 +1,12 @@
 import sys
 import time
-import webbrowser
 from collections import defaultdict
-from functools import partial
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Any, Optional
 
 import keyring
 import requests
+from prosperity3bt.open import open_visualizer
 from requests_toolbelt import MultipartEncoder
 
 try:
@@ -169,7 +167,7 @@ def download_logs(data: dict[str, Any], output_file: Path) -> None:
 def log_profit_loss(output_file: Path) -> None:
     lines = output_file.read_text(encoding="utf-8").splitlines()
 
-    profit_loss_by_timestamp = defaultdict(float)
+    profit_loss_by_timestamp: dict[int, float] = defaultdict(float)
 
     activities_log_idx = lines.index("Activities log:")
     for line in lines[activities_log_idx + 2 :]:
@@ -186,30 +184,7 @@ def log_profit_loss(output_file: Path) -> None:
     print(f"Final profit / loss: {final_profit_loss:,.0f}")
 
 
-class HTTPRequestHandler(SimpleHTTPRequestHandler):
-    def end_headers(self) -> None:
-        self.send_header("Access-Control-Allow-Origin", "*")
-        return super().end_headers()
-
-    def log_message(self, format: str, *args: Any) -> None:
-        return
-
-
-def open_in_visualizer(output_file: Path, no_requests: int) -> None:
-    http_handler = partial(HTTPRequestHandler, directory=output_file.parent)
-    http_server = HTTPServer(("localhost", 0), http_handler)
-
-    webbrowser.open(
-        f"https://jmerle.github.io/imc-prosperity-3-visualizer/?open=http://localhost:{http_server.server_port}/{output_file.name}"
-    )
-
-    # Chrome makes 2 requests: 1 OPTIONS request to check for CORS headers and 1 GET request to get the data
-    # Some users reported their browser only makes 1 request, which is covered by the --vis-requests option
-    for _ in range(no_requests):
-        http_server.handle_request()
-
-
-def submit(algorithm_file: Path, output_file: Optional[Path], open_visualizer: bool, visualizer_requests: int) -> None:
+def submit(algorithm_file: Path, output_file: Optional[Path], open_visualizer_on_success: bool) -> None:
     round = get_current_round()
 
     submit_algorithm(algorithm_file)
@@ -221,8 +196,8 @@ def submit(algorithm_file: Path, output_file: Optional[Path], open_visualizer: b
         if data["status"] == "FINISHED":
             log_profit_loss(output_file)
 
-    if open_visualizer:
+    if open_visualizer_on_success:
         if data["status"] == "ERROR":
             print("Submission errored, not opening visualizer")
         else:
-            open_in_visualizer(output_file, visualizer_requests)
+            open_visualizer(output_file)

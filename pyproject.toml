@@ -16,6 +16,7 @@ classifiers = [
 requires-python = ">= 3.9"
 dependencies = [
     "keyring",
+    "prosperity3bt",
     "requests",
     "requests-toolbelt",
 ]
@@ -37,7 +38,9 @@ include = ["prosperity3submit", "prosperity3submit.*"]
 
 [tool.uv]
 dev-dependencies = [
+    "mypy>=1.15.0",
     "ruff>=0.9.7",
+    "types-requests>=2.32.0.20250301",
 ]
 
 [tool.ruff]
@@ -45,3 +48,6 @@ line-length = 120
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.mypy]
+ignore_missing_imports = true
