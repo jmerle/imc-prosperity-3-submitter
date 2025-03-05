@@ -563,7 +563,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "keyring" },
-    { name = "prosperity3bt" },
+    { name = "prosperity3bt", specifier = ">=0.2.0" },
     { name = "requests" },
     { name = "requests-toolbelt" },
 ]

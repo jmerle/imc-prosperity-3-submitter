@@ -16,7 +16,7 @@ classifiers = [
 requires-python = ">= 3.9"
 dependencies = [
     "keyring",
-    "prosperity3bt",
+    "prosperity3bt>=0.2.0",
     "requests",
     "requests-toolbelt",
 ]
