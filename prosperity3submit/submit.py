@@ -37,7 +37,7 @@ Your token is stored in your system's credentials store for convenience.
     keyring.set_password(KEYRING_SERVICE, KEYRING_USERNAME, token)
 
 
-def get_stored_token(retries: int = 3) -> str | None:
+def get_stored_token(retries: int = 3) -> Optional[str]:
     try:
         # keyring.get_password() occasionally fails for no apparent reason, retrying usually fixes it
         return keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
