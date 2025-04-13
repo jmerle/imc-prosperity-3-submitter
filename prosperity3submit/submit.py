@@ -22,6 +22,15 @@ KEYRING_USERNAME = "prosperity-id-token"
 API_BASE_URL = "https://bz97lt8b1e.execute-api.eu-west-1.amazonaws.com/prod"
 
 
+def validate_token(token: str) -> bool:
+    bad_chars = [ch for ch in token if ord(ch) not in range(256)]
+    if len(bad_chars) > 0:
+        print(f"Token contains invalid character(s): {', '.join(bad_chars)}")
+        return False
+
+    return True
+
+
 def refresh_token() -> None:
     print(
         """
@@ -34,13 +43,22 @@ Your token is stored in your system's credentials store for convenience.
     )
 
     token = input("Prosperity ID token: ")
+
+    if not validate_token(token):
+        return refresh_token()
+
     keyring.set_password(KEYRING_SERVICE, KEYRING_USERNAME, token)
 
 
 def get_stored_token(retries: int = 3) -> Optional[str]:
     try:
         # keyring.get_password() occasionally fails for no apparent reason, retrying usually fixes it
-        return keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
+        token = keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
+
+        if token is not None and not validate_token(token):
+            return None
+
+        return token
     except Exception:
         if retries <= 0:
             raise
